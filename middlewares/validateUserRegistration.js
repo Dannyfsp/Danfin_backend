@@ -30,7 +30,6 @@ const validateUserRegistration = (req, res, next) => {
       return res.status(400).json({ message: 'profile image is required' });
     case !gender || gender.length < 4:
       return res.status(400).json({ message: 'gender is required' });
-
     default:
       next();
   }

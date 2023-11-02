@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  account_id   String        @unique
+  firstname    String
+  lastname     String
+  email        String
+  password     String
+  balance      String        @default("0.00")
+  is_blocked   Boolean       @default(false)
+  is_suspended Boolean       @default(false)
+  profile_img  String
+  gender       String
+  roles        roles         @default(user)
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  otp          Otp?
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Otp {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    Int      @unique
+  otp_code   String
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@map("otps")
+}
+
+model Transaction {
+  id                Int                @id @default(autoincrement())
+  user              User               @relation(fields: [user_id], references: [id])
+  user_id           Int
+  amount            String
+  account_name      String
+  account_number    String
+  routing_number    String?
+  narration         String
+  available_balance String
+  type              transaction_type
+  status            transaction_status
+  created_at        DateTime           @default(now())
+
+  @@map("transactions")
+}
+
+enum roles {
+  user
+  admin
+}
+
+enum transaction_type {
+  debit
+  credit
+}
+
+enum transaction_status {
+  failed
+  success
+}

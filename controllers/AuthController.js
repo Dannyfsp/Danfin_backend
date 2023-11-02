@@ -12,6 +12,14 @@ const AuthController = {
       });
       if (!user) return res.status(400).json({ message: 'Invalid account Id' });
 
+      // check if user account is suspended
+      if (user.is_suspended)
+        return res
+          .status(403)
+          .json({
+            message: 'your account is restricted and has been suspended',
+          });
+
       // check if password is correct
       if (password !== user.password)
         return res.status(400).json({ message: 'Incorrect password' });

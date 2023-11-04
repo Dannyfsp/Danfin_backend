@@ -74,6 +74,7 @@ const AdminController = {
 
       const transactionBalance = floatBalance + creditAmount;
       const newBalance = formatBalanceToString(transactionBalance);
+      const stringAmount = formatBalanceToString(creditAmount);
 
       await Promise.all([
         prisma.user.update({
@@ -83,7 +84,7 @@ const AdminController = {
         prisma.transaction.create({
           data: {
             user_id: user.id,
-            amount,
+            amount: stringAmount,
             account_name: depositorName,
             account_number: depositorAccountNo || 'cash',
             narration,
@@ -137,6 +138,7 @@ const AdminController = {
 
       const transactionBalance = floatBalance - debitAmount;
       const newBalance = formatBalanceToString(transactionBalance);
+      const stringAmount = formatBalanceToString(debitAmount);
 
       await Promise.all([
         prisma.user.update({
@@ -146,7 +148,7 @@ const AdminController = {
         prisma.transaction.create({
           data: {
             user_id: user.id,
-            amount,
+            amount: stringAmount,
             account_name: accountName,
             account_number: accountNumber || 'cash',
             routing_number: routingNumber,

@@ -6,6 +6,11 @@ const AuthController = {
     try {
       const { accountId, password } = req.body;
 
+      if (!accountId || !password)
+        return res
+          .status(400)
+          .json({ message: 'accountId and password is required' });
+
       // check if user's account id exists in database
       const user = await prisma.user.findUnique({
         where: { account_id: accountId },
@@ -14,11 +19,9 @@ const AuthController = {
 
       // check if user account is suspended
       if (user.is_suspended)
-        return res
-          .status(403)
-          .json({
-            message: 'your account is restricted and has been suspended',
-          });
+        return res.status(403).json({
+          message: 'your account is restricted and has been suspended',
+        });
 
       // check if password is correct
       if (password !== user.password)

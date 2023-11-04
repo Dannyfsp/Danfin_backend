@@ -18,6 +18,8 @@ const AdminController = {
 
       const accountId = '21' + generateUniqueCode(8);
 
+      console.log(accountId);
+
       const user = await prisma.user.create({
         data: {
           account_id: accountId,
@@ -26,7 +28,7 @@ const AdminController = {
           email,
           password,
           balance,
-          profileImage,
+          profile_img: profileImage,
           gender,
         },
       });
@@ -56,6 +58,16 @@ const AdminController = {
       });
       if (!user) res.status(400).json({ message: 'account Id does not exist' });
 
+      // make sure the date is not a future date
+      const requestedDate = new Date(date);
+      const currentDate = new Date();
+
+      // Compare the requested date with the current date
+      if (requestedDate > currentDate)
+        return res
+          .status(400)
+          .json({ message: 'You cannot set a transaction for a future date' });
+
       // convert amount to float
       const creditAmount = parseStringToFloat(amount);
       const floatBalance = parseStringToFloat(user.balance);
@@ -78,7 +90,7 @@ const AdminController = {
             available_balance: newBalance,
             type: 'credit',
             status: 'success',
-            created_at: date,
+            created_at: requestedDate,
           },
         }),
       ]);
@@ -109,6 +121,16 @@ const AdminController = {
       });
       if (!user) res.status(400).json({ message: 'account Id does not exist' });
 
+      // make sure the date is not a future date
+      const requestedDate = new Date(date);
+      const currentDate = new Date();
+
+      // Compare the requested date with the current date
+      if (requestedDate > currentDate)
+        return res
+          .status(400)
+          .json({ message: 'You cannot set a transaction for a future date' });
+
       // convert amount to float
       const debitAmount = parseStringToFloat(amount);
       const floatBalance = parseStringToFloat(user.balance);
@@ -132,7 +154,7 @@ const AdminController = {
             available_balance: newBalance,
             type: 'debit',
             status: 'success',
-            created_at: date,
+            created_at: requestedDate,
           },
         }),
       ]);

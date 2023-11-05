@@ -1,6 +1,6 @@
 exports.validateCreditTransaction = (req, res, next) => {
   try {
-    const { accountId, amount, narration } = req.body;
+    const { accountId, accountName, amount, narration } = req.body;
     switch (true) {
       case !accountId || typeof accountId !== 'string':
         return res
@@ -10,8 +10,10 @@ exports.validateCreditTransaction = (req, res, next) => {
         return res
           .status(400)
           .json({ message: 'Amount is required and must be a string' });
-      case !depositorName:
-        return res.status(400).json({ message: 'Depositor Name is required' });
+      case !accountName:
+        return res
+          .status(400)
+          .json({ message: 'Account Name or Depositor Name is required' });
       case !narration:
         return res.status(400).json({ message: 'narration is required' });
       default:

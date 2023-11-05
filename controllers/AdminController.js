@@ -82,7 +82,7 @@ const AdminController = {
       const transactionId = generateTransactionId(12);
 
       // get full transaction narration
-      const fullNarration = `${accountName || ''} | ${narration}`;
+      const fullNarration = `${accountName || ''} - ${narration}`;
 
       const [_, transaction] = await Promise.all([
         prisma.user.update({
@@ -107,12 +107,10 @@ const AdminController = {
         }),
       ]);
 
-      return res
-        .status(200)
-        .json({
-          message: `${creditAmount} deposited successfully`,
-          transaction,
-        });
+      return res.status(200).json({
+        message: `${creditAmount} deposited successfully`,
+        transaction,
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -159,7 +157,7 @@ const AdminController = {
       const transactionId = generateTransactionId(12);
 
       // get full transaction narration
-      const fullNarration = `${accountName || ''} | ${narration}`;
+      const fullNarration = `${accountName || ''} - ${narration}`;
 
       const [_, transaction] = await Promise.all([
         prisma.user.update({

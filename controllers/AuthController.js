@@ -109,7 +109,18 @@ const AuthController = {
     try {
       const { id } = req.params;
 
-      const transaction = await prisma.transaction.findFirst({ where: { id } });
+      const transaction = await prisma.transaction.findFirst({
+        where: { id },
+        select: {
+          account_id: true,
+          transaction_id: true,
+          narration: true,
+          amount: true,
+          type: true,
+          created_at: true,
+          available_balance: true,
+        },
+      });
 
       const date = formatDateTime(transaction.created_at).formattedDate;
       const time = formatDateTime(transaction.created_at).formattedTime;

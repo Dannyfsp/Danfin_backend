@@ -46,11 +46,14 @@ model Transaction {
   id                Int                @id @default(autoincrement())
   user              User               @relation(fields: [user_id], references: [id])
   user_id           Int
+  account_id        String
+  transaction_id    String             @unique
   amount            String
-  account_name      String
+  account_name      String?
   account_number    String?
   routing_number    String?
   bank_name         String?
+  currency          String             @default("USD")
   narration         String
   available_balance String
   type              transaction_type

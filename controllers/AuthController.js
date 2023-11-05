@@ -1,5 +1,6 @@
 const prisma = require('../config/prisma');
 const TokenService = require('../services/TokenService');
+const formatDateTime = require('../utils/formatDateTime');
 
 const AuthController = {
   login: async (req, res) => {
@@ -37,6 +38,83 @@ const AuthController = {
       return res
         .status(200)
         .json({ message: `${user.firstname} logged in successfully`, token });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  dashboard: async (req, res) => {
+    try {
+      const { id } = req.user;
+
+      const [userDetails, transactions] = await Promise.all([
+        prisma.user.findUnique({
+          where: { id },
+          select: { balance: true, account_id: true },
+        }),
+        prisma.transaction.findMany({
+          where: { user_id: id },
+          take: 5,
+          orderBy: { created_at: { desc: true } },
+        }),
+      ]);
+
+      const formattedTransactions = transactions.map((transaction) => {
+        return {
+          id: transaction.id,
+          accountName: transaction.account_name,
+          amount: transaction.amount,
+          date: formatDateTime(transaction.created_at).formattedDate,
+          time: formatDateTime(transaction.created_at).formattedTime,
+          type: transaction.type,
+        };
+      });
+
+      return res.status(200).json({
+        balance: userDetails.balance,
+        accountId: userDetails.account_id,
+        transactions: formattedTransactions,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  getAllTransactions: async (req, res) => {
+    try {
+      const { id } = req.user;
+
+      const transactions = await prisma.transaction.findMany({
+        where: { user_id: id },
+      });
+
+      const formattedTransactions = transactions.map((transaction) => {
+        return {
+          id: transaction.id,
+          accountName: transaction.account_name,
+          amount: transaction.amount,
+          date: formatDateTime(transaction.created_at).formattedDate,
+          time: formatDateTime(transaction.created_at).formattedTime,
+          type: transaction.type,
+        };
+      });
+
+      return res.status(200).json({ transactions: formattedTransactions });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  getTransaction: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const transaction = await prisma.transaction.findFirst({ where: { id } });
+
+      const date = formatDateTime(transaction.created_at).formattedDate;
+      const time = formatDateTime(transaction.created_at).formattedTime;
+
+      return res.status(200).json({ transaction, date, time });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

@@ -2,6 +2,7 @@ const prisma = require('../config/prisma');
 const generateUniqueCode = require('../utils/generateUniqueCode');
 const parseStringToFloat = require('../utils/parseStringToFloat');
 const formatBalanceToString = require('../utils/formatBalanceToString');
+const generateTransactionId = require('../utils/generateTransactionId');
 
 const AdminController = {
   registerUser: async (req, res) => {
@@ -46,8 +47,8 @@ const AdminController = {
       const {
         accountId,
         amount,
-        depositorName,
-        depositorAccountNo,
+        accountName,
+        accountNumber,
         bankName,
         narration,
         date,
@@ -77,7 +78,13 @@ const AdminController = {
       const newBalance = formatBalanceToString(transactionBalance);
       const stringAmount = formatBalanceToString(creditAmount);
 
-      await Promise.all([
+      // generate transaction code
+      const transactionId = generateTransactionId(12);
+
+      // get full transaction narration
+      const fullNarration = `${accountName || ''} | ${narration}`;
+
+      const [_, transaction] = await Promise.all([
         prisma.user.update({
           where: { account_id: accountId },
           data: { balance: newBalance },
@@ -85,11 +92,13 @@ const AdminController = {
         prisma.transaction.create({
           data: {
             user_id: user.id,
+            account_id: accountId,
+            transaction_id: transactionId,
             amount: stringAmount,
-            account_name: depositorName,
-            account_number: depositorAccountNo || 'cash',
+            account_name: accountName,
+            account_number: accountNumber,
             bank_name: bankName,
-            narration,
+            narration: fullNarration,
             available_balance: newBalance,
             type: 'credit',
             status: 'success',
@@ -100,7 +109,10 @@ const AdminController = {
 
       return res
         .status(200)
-        .json({ message: `${creditAmount} deposited successfully` });
+        .json({
+          message: `${creditAmount} deposited successfully`,
+          transaction,
+        });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -143,7 +155,13 @@ const AdminController = {
       const newBalance = formatBalanceToString(transactionBalance);
       const stringAmount = formatBalanceToString(debitAmount);
 
-      await Promise.all([
+      // generate transaction code
+      const transactionId = generateTransactionId(12);
+
+      // get full transaction narration
+      const fullNarration = `${accountName || ''} | ${narration}`;
+
+      const [_, transaction] = await Promise.all([
         prisma.user.update({
           where: { account_id: accountId },
           data: { balance: newBalance },
@@ -151,12 +169,14 @@ const AdminController = {
         prisma.transaction.create({
           data: {
             user_id: user.id,
+            account_id: accountId,
+            transaction_id: transactionId,
             amount: stringAmount,
             account_name: accountName,
-            account_number: accountNumber || 'cash',
+            account_number: accountNumber,
             routing_number: routingNumber,
             bank_name: bankName,
-            narration,
+            narration: fullNarration,
             available_balance: newBalance,
             type: 'debit',
             status: 'success',
@@ -167,7 +187,7 @@ const AdminController = {
 
       return res
         .status(200)
-        .json({ message: `${debitAmount} debited successfully` });
+        .json({ message: `${debitAmount} debited successfully`, transaction });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

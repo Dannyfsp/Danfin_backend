@@ -42,11 +42,14 @@ CREATE TABLE "otps" (
 CREATE TABLE "transactions" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
+    "account_id" TEXT NOT NULL,
+    "transaction_id" TEXT NOT NULL,
     "amount" TEXT NOT NULL,
-    "account_name" TEXT NOT NULL,
+    "account_name" TEXT,
     "account_number" TEXT,
     "routing_number" TEXT,
     "bank_name" TEXT,
+    "currency" TEXT NOT NULL DEFAULT 'USD',
     "narration" TEXT NOT NULL,
     "available_balance" TEXT NOT NULL,
     "type" "transaction_type" NOT NULL,
@@ -61,6 +64,9 @@ CREATE UNIQUE INDEX "users_account_id_key" ON "users"("account_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "otps_user_id_key" ON "otps"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "transactions_transaction_id_key" ON "transactions"("transaction_id");
 
 -- AddForeignKey
 ALTER TABLE "otps" ADD CONSTRAINT "otps_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

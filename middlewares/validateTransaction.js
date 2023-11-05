@@ -1,6 +1,6 @@
 exports.validateCreditTransaction = (req, res, next) => {
   try {
-    const { accountId, amount, depositorName, narration } = req.body;
+    const { accountId, amount, narration } = req.body;
     switch (true) {
       case !accountId || typeof accountId !== 'string':
         return res

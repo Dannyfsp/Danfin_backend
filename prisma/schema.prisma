@@ -75,5 +75,6 @@ enum transaction_type {
 
 enum transaction_status {
   failed
+  pending
   success
 }

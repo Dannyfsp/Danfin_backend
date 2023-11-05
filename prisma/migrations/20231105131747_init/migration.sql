@@ -5,7 +5,7 @@ CREATE TYPE "roles" AS ENUM ('user', 'admin');
 CREATE TYPE "transaction_type" AS ENUM ('debit', 'credit');
 
 -- CreateEnum
-CREATE TYPE "transaction_status" AS ENUM ('failed', 'success');
+CREATE TYPE "transaction_status" AS ENUM ('failed', 'pending', 'success');
 
 -- CreateTable
 CREATE TABLE "users" (

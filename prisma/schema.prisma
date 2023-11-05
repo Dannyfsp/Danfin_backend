@@ -48,8 +48,9 @@ model Transaction {
   user_id           Int
   amount            String
   account_name      String
-  account_number    String
+  account_number    String?
   routing_number    String?
+  bank_name         String?
   narration         String
   available_balance String
   type              transaction_type

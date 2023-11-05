@@ -48,6 +48,7 @@ const AdminController = {
         amount,
         depositorName,
         depositorAccountNo,
+        bankName,
         narration,
         date,
       } = req.body;
@@ -87,6 +88,7 @@ const AdminController = {
             amount: stringAmount,
             account_name: depositorName,
             account_number: depositorAccountNo || 'cash',
+            bank_name: bankName,
             narration,
             available_balance: newBalance,
             type: 'credit',
@@ -112,6 +114,7 @@ const AdminController = {
         accountName,
         accountNumber,
         routingNumber,
+        bankName,
         narration,
         date,
       } = req.body;
@@ -152,6 +155,7 @@ const AdminController = {
             account_name: accountName,
             account_number: accountNumber || 'cash',
             routing_number: routingNumber,
+            bank_name: bankName,
             narration,
             available_balance: newBalance,
             type: 'debit',

@@ -61,14 +61,18 @@ const AdminController = {
       if (!user) res.status(400).json({ message: 'account Id does not exist' });
 
       // make sure the date is not a future date
-      const requestedDate = new Date(date);
-      const currentDate = new Date();
+      let requestedDate;
+      let currentDate;
 
-      // Compare the requested date with the current date
-      if (requestedDate > currentDate)
-        return res
-          .status(400)
-          .json({ message: 'You cannot set a transaction for a future date' });
+      if (date) {
+        requestedDate = new Date(date);
+        currentDate = new Date();
+        // Compare the requested date with the current date
+        if (requestedDate > currentDate)
+          return res.status(400).json({
+            message: 'You cannot set a transaction for a future date',
+          });
+      }
 
       // convert amount to float
       const creditAmount = parseStringToFloat(amount);
@@ -108,7 +112,7 @@ const AdminController = {
       ]);
 
       return res.status(200).json({
-        message: `${creditAmount} deposited successfully`,
+        message: `${stringAmount} deposited successfully`,
         transaction,
       });
     } catch (error) {
@@ -136,14 +140,18 @@ const AdminController = {
       if (!user) res.status(400).json({ message: 'account Id does not exist' });
 
       // make sure the date is not a future date
-      const requestedDate = new Date(date);
-      const currentDate = new Date();
+      let requestedDate;
+      let currentDate;
 
-      // Compare the requested date with the current date
-      if (requestedDate > currentDate)
-        return res
-          .status(400)
-          .json({ message: 'You cannot set a transaction for a future date' });
+      if (date) {
+        requestedDate = new Date(date);
+        currentDate = new Date();
+        // Compare the requested date with the current date
+        if (requestedDate > currentDate)
+          return res.status(400).json({
+            message: 'You cannot set a transaction for a future date',
+          });
+      }
 
       // convert amount to float
       const debitAmount = parseStringToFloat(amount);
@@ -185,7 +193,7 @@ const AdminController = {
 
       return res
         .status(200)
-        .json({ message: `${debitAmount} debited successfully`, transaction });
+        .json({ message: `${stringAmount} debited successfully`, transaction });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

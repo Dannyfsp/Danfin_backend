@@ -55,7 +55,7 @@ const AuthController = {
         prisma.transaction.findMany({
           where: { user_id: id },
           take: 5,
-          orderBy: { created_at: { desc: true } },
+          orderBy: { created_at: 'desc' },
         }),
       ]);
 
@@ -86,6 +86,7 @@ const AuthController = {
 
       const transactions = await prisma.transaction.findMany({
         where: { user_id: id },
+        orderBy: { created_at: 'desc' },
       });
 
       const formattedTransactions = transactions.map((transaction) => {
@@ -94,7 +95,6 @@ const AuthController = {
           accountName: transaction.account_name,
           amount: transaction.amount,
           date: formatDateTime(transaction.created_at).formattedDate,
-          time: formatDateTime(transaction.created_at).formattedTime,
           type: transaction.type,
         };
       });
@@ -107,7 +107,8 @@ const AuthController = {
 
   getTransaction: async (req, res) => {
     try {
-      const { id } = req.params;
+      let { id } = req.params;
+      id = Number(id);
 
       const transaction = await prisma.transaction.findFirst({
         where: { id },

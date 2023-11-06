@@ -17,6 +17,17 @@ router.get('/', (_, res) => {
 
 // auth routes
 router.post('/api/auth/login', AuthController.login);
+router.get('/api/auth/dashboard', authenticateUser, AuthController.dashboard);
+router.get(
+  '/api/auth/transactions',
+  authenticateUser,
+  AuthController.getAllTransactions
+);
+router.get(
+  '/api/auth/transaction/:id',
+  authenticateUser,
+  AuthController.getTransaction
+);
 
 // admin routes
 router.post(

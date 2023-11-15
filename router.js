@@ -28,6 +28,16 @@ router.get(
   authenticateUser,
   AuthController.getTransaction
 );
+router.post(
+  '/api/auth/initiate-transfer',
+  authenticateUser,
+  AuthController.initiateTransfer
+);
+router.post(
+  '/api/auth/authenticate-transfer',
+  authenticateUser,
+  AuthController.authenticateTransfer
+);
 
 // admin routes
 router.post(

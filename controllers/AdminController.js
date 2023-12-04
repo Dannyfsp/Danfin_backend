@@ -19,8 +19,6 @@ const AdminController = {
 
       const accountId = '21' + generateUniqueCode(8);
 
-      console.log(accountId);
-
       const user = await prisma.user.create({
         data: {
           account_id: accountId,

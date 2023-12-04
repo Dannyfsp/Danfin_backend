@@ -32,7 +32,7 @@ const AuthController = {
 
       // check if password is correct
       if (password !== user.password)
-        return res.status(400).json({ message: 'Incorrect password' });
+        return res.status(401).json({ message: 'Incorrect password' });
 
       const tokenData = {
         id: user.id,
@@ -245,7 +245,7 @@ const AuthController = {
           .status(400)
           .json({ message: 'no otp record has been saved' });
       if (otp !== otpData.otp_code)
-        return res.status(400).json({ message: 'Invalid OTP' });
+        return res.status(401).json({ message: 'Invalid OTP' });
 
       // check if otp has expired
       const currentDate = new Date();
